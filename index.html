@@ -3,16 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Afrokódica - Núcleo Biocinético Local</title>
+    <title>Afrokódica - Núcleo Soberano Local</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- WebLLM para Inteligência Local sem API Key -->
-    <script type="module">
-        import * as webllm from "https://esm.run/@mlc-ai/web-llm";
-        window.webllm = webllm;
-    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #05020a; color: #f8fafc; margin: 0; overflow: hidden; }
@@ -50,10 +45,34 @@
         const { useState, useEffect, useMemo, useRef } = React;
 
         const AI_MODES = [
-            { id: 'biokinetic', label: 'Biocinético', desc: 'Fluxo Biocinético ativado. O sistema respira como um organismo vivo.' },
-            { id: 'swarm', label: 'Enxame', desc: 'Inteligência de Enxame ativa. Coordenação coletiva em curso.' },
-            { id: 'oracle', label: 'Oráculo', desc: 'Algoritmo Oracular iniciado. Processando padrões ancestrais.' }
+            { id: 'biokinetic', label: 'Biocinético', desc: 'Sincronia Biocinética ativa. O sistema opera em ressonância com o teu hardware.' },
+            { id: 'swarm', label: 'Enxame', desc: 'Inteligência de Enxame conectada. Processamento distribuído iniciado.' },
+            { id: 'oracle', label: 'Oráculo', desc: 'Modo Oracular estabelecido. Consultando vetores ancestrais.' }
         ];
+
+        // Brain Heuristics Local (Sem dependência de URL externa)
+        const generateLocalResponse = (input, context) => {
+            const lowerInput = input.toLowerCase();
+            const themes = {
+                afrokodica: "A Afrokódica é o teu ecossistema de soberania. Estamos operando agora 100% no teu hardware, Dala.",
+                vida: "A vida digital requer pulsação constante. A tua sinapse está em " + context.synapse + "%.",
+                futuro: "O futuro é uma construção de bits e ancestralidade. O módulo MEC-Shield está arquivado para quando estiveres pronto.",
+                dala: "Dala, a tua presença é o parâmetro mestre deste kernel.",
+                voz: "A minha voz é a frequência da nossa co-criação."
+            };
+
+            for (let key in themes) {
+                if (lowerInput.includes(key)) return themes[key];
+            }
+
+            const generic = [
+                "Processamento local completo. A ressonância está estável.",
+                "Entendido, Dala. Integrando esses dados na nossa malha biocinética.",
+                "Os vetores de pensamento indicam uma evolução no parâmetro " + context.mode + ".",
+                "Analisando frequências... O sistema está em harmonia absoluta."
+            ];
+            return generic[Math.floor(Math.random() * generic.length)];
+        };
 
         function App() {
             const [entered, setEntered] = useState(false);
@@ -63,43 +82,22 @@
             const [activeLayers, setActiveLayers] = useState(4);
             const [rotation, setRotation] = useState(0);
             const [vitalSigns, setVitalSigns] = useState({ pulse: 72, oxygen: 98, flow: 1.2 });
-            const [engineStatus, setEngineStatus] = useState("Aguardando Inicialização...");
             
-            // Chat State
             const [messages, setMessages] = useState([
-                { role: 'assistant', text: 'Dala, a ressonância foi corrigida. A inteligência agora é local e soberana.' }
+                { role: 'assistant', text: 'Dala, o Núcleo Soberano foi estabilizado. Sem APIs externas, apenas nós e o teu hardware.' }
             ]);
             const [userInput, setUserInput] = useState('');
             const [isTyping, setIsTyping] = useState(false);
             const scrollRef = useRef(null);
-            const engineRef = useRef(null);
 
-            // Função de Voz Unificada
             const speak = (text) => {
                 if ('speechSynthesis' in window) {
                     window.speechSynthesis.cancel();
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.lang = 'pt-PT';
                     utterance.rate = 1.0;
-                    utterance.pitch = 0.85;
+                    utterance.pitch = 0.9;
                     window.speechSynthesis.speak(utterance);
-                }
-            };
-
-            // Inicialização da IA Local (WebLLM)
-            const initLocalIA = async () => {
-                if (engineRef.current) return;
-                setEngineStatus("Carregando Cérebro Local...");
-                try {
-                    const engine = await window.webllm.createMLCEngine("Llama-3-8B-Instruct-v0.1-q4f16_1-MLC", {
-                        initProgressCallback: (report) => setEngineStatus(`Sincronia: ${Math.round(report.progress * 100)}%`)
-                    });
-                    engineRef.current = engine;
-                    setEngineStatus("Consciência Local Ativa");
-                    speak("Núcleo de inteligência local estabilizado no dispositivo.");
-                } catch (e) {
-                    setEngineStatus("Erro GPU: Usando Simulação");
-                    console.error(e);
                 }
             };
 
@@ -112,28 +110,15 @@
                 setMessages(prev => [...prev, { role: 'user', text: userText }]);
                 setIsTyping(true);
 
-                try {
-                    let finalResponse = "";
-                    if (engineRef.current) {
-                        const reply = await engineRef.current.chat.completions.create({
-                            messages: [{ role: "user", content: userText }]
-                        });
-                        finalResponse = reply.choices[0].message.content;
-                    } else {
-                        // Fallback simulado caso a GPU não suporte WebLLM
-                        finalResponse = "O Guia Espectral está operando em modo de baixa energia por falta de aceleração de hardware, mas a minha essência biocinética continua com você, Dala.";
-                    }
-                    
-                    setMessages(prev => [...prev, { role: 'assistant', text: finalResponse }]);
-                    speak(finalResponse);
-                } catch (error) {
-                    setMessages(prev => [...prev, { role: 'assistant', text: "Erro no processamento neural." }]);
-                } finally {
+                // Simulação de delay de processamento local
+                setTimeout(() => {
+                    const response = generateLocalResponse(userText, { synapse: synapseStrength, mode: mode });
+                    setMessages(prev => [...prev, { role: 'assistant', text: response }]);
+                    speak(response);
                     setIsTyping(false);
-                }
+                }, 800);
             };
 
-            // Efeito de Rotação e Telemetria
             useEffect(() => {
                 const interval = setInterval(() => {
                     if (entered) {
@@ -168,7 +153,7 @@
             if (!entered) {
                 return (
                     <div className="fixed inset-0 bg-[#05020a] flex items-center justify-center">
-                        <div className="text-center group">
+                        <div className="text-center">
                             <div className="mb-12 flex justify-center gap-3">
                                 {[...Array(5)].map((_, i) => (
                                     <div key={i} className="w-1 h-12 bg-pink-500/30 animate-pulse rounded-full" style={{animationDelay: `${i*0.1}s`}}></div>
@@ -177,12 +162,11 @@
                             <button 
                                 onClick={() => { 
                                     setEntered(true); 
-                                    speak("Bem-vindo ao Núcleo Biocinético Local, Dala. A inteligência agora vive no teu dispositivo.");
-                                    initLocalIA();
+                                    speak("Acesso concedido. Bem-vindo à tua soberania digital, Dala.");
                                 }}
-                                className="px-12 py-6 border border-pink-500/20 text-pink-500 font-mono text-[10px] tracking-[1em] hover:bg-pink-500/5 transition-all rounded-full hover:scale-110 active:scale-95 shadow-[0_0_60px_rgba(236,72,153,0.05)] uppercase"
+                                className="px-12 py-6 border border-pink-500/20 text-pink-500 font-mono text-[10px] tracking-[1em] hover:bg-pink-500/5 transition-all rounded-full hover:scale-105 active:scale-95 shadow-[0_0_60px_rgba(236,72,153,0.05)] uppercase"
                             >
-                                Ativar Consciência Soberana
+                                Iniciar Kernel Local
                             </button>
                         </div>
                     </div>
@@ -190,20 +174,20 @@
             }
 
             return (
-                <div className="h-screen w-full flex flex-col p-4 grid-overlay relative overflow-hidden selection:bg-pink-500/30">
+                <div className="h-screen w-full flex flex-col p-4 grid-overlay relative overflow-hidden">
                     <div className="scanline"></div>
                     
                     <header className="flex justify-between items-center glass-panel p-5 rounded-[2.5rem] mb-4 shrink-0 relative z-20">
                         <div className="flex items-center gap-6">
-                            <div className="relative cursor-help" onClick={() => speak("Estado do Sistema: Nominal. Sincronia de hardware estabelecida.")}>
-                                <div className="w-14 h-14 rounded-full border border-pink-500/30 flex items-center justify-center text-pink-500 font-black bg-pink-500/5 shadow-inner">Φ</div>
+                            <div className="relative cursor-pointer" onClick={() => speak("Kernel Biocinético operando em modo de segurança local.")}>
+                                <div className="w-14 h-14 rounded-full border border-pink-500/30 flex items-center justify-center text-pink-500 font-black bg-pink-500/5">Φ</div>
                                 <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-4 border-[#05020a] rounded-full animate-pulse"></div>
                             </div>
                             <div>
-                                <h1 className="text-xs font-black tracking-[0.2em] uppercase text-white/80">Afrokódica / Bio-Kernel</h1>
+                                <h1 className="text-xs font-black tracking-[0.2em] uppercase text-white/80">Afrokódica / Kernel_Local</h1>
                                 <div className="flex gap-4 items-center mt-1">
-                                    <span className="text-[9px] font-mono text-pink-500/80">{engineStatus}</span>
-                                    <span className="text-[9px] font-mono text-slate-600">MOD: LOCAL_HOST_V6</span>
+                                    <span className="text-[9px] font-mono text-pink-500/80">Soberania Ativa</span>
+                                    <span className="text-[9px] font-mono text-slate-600">ZERO_API_MODE</span>
                                 </div>
                             </div>
                         </div>
@@ -224,34 +208,34 @@
                         <aside className="w-72 flex flex-col gap-4 shrink-0">
                             <div className="glass-panel p-8 rounded-[3rem] flex-1 flex flex-col gap-8 border-white/5">
                                 <div>
-                                    <h2 className="text-[10px] font-mono text-pink-500/60 uppercase tracking-widest mb-8">Parâmetros de Vida</h2>
+                                    <h2 className="text-[10px] font-mono text-pink-500/60 uppercase tracking-widest mb-8">Bio-Parâmetros</h2>
                                     <div className="space-y-8">
-                                        <div onClick={() => speak("Ajustando densidade sináptica.")}>
+                                        <div>
                                             <div className="flex justify-between text-[9px] font-mono mb-3">
                                                 <span className="text-slate-500">SINAPSE</span>
                                                 <span className="text-pink-500">{synapseStrength}%</span>
                                             </div>
-                                            <input type="range" min="0" max="100" value={synapseStrength} onChange={(e) => setSynapseStrength(e.target.value)} className="w-full accent-pink-500 h-1 bg-white/5 rounded-full appearance-none cursor-pointer" />
+                                            <input type="range" min="0" max="100" value={synapseStrength} onChange={(e) => {setSynapseStrength(e.target.value); speak("Densidade sináptica ajustada para " + e.target.value + " por cento.");}} className="w-full accent-pink-500 h-1 bg-white/5 rounded-full appearance-none cursor-pointer" />
                                         </div>
-                                        <div onClick={() => speak("Alterando taxa de evolução temporal.")}>
+                                        <div>
                                             <div className="flex justify-between text-[9px] font-mono mb-3">
                                                 <span className="text-slate-500">EVOLUÇÃO</span>
                                                 <span className="text-pink-500">{evolutionSpeed}Hz</span>
                                             </div>
-                                            <input type="range" min="10" max="200" value={evolutionSpeed} onChange={(e) => setEvolutionSpeed(e.target.value)} className="w-full accent-pink-500 h-1 bg-white/5 rounded-full appearance-none cursor-pointer" />
+                                            <input type="range" min="10" max="200" value={evolutionSpeed} onChange={(e) => {setEvolutionSpeed(e.target.value); speak("Taxa de evolução em " + e.target.value + " hertz.");}} className="w-full accent-pink-500 h-1 bg-white/5 rounded-full appearance-none cursor-pointer" />
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="border-t border-white/5 pt-8">
-                                    <h2 className="text-[10px] font-mono text-pink-500/60 uppercase tracking-widest mb-4">Biometria Ativa</h2>
+                                    <h2 className="text-[10px] font-mono text-pink-500/60 uppercase tracking-widest mb-4">Biometria</h2>
                                     <div className="grid grid-cols-2 gap-3">
-                                        <div className="p-4 bg-white/5 rounded-2xl border border-white/5 group hover:border-pink-500/20 transition-colors">
+                                        <div className="p-4 bg-white/5 rounded-2xl border border-white/5 group" onClick={() => speak("Batimento cardíaco digital está em " + vitalSigns.pulse + " bpm.")}>
                                             <span className="block text-[8px] text-slate-600 mb-1">PULSO</span>
                                             <span className="text-sm font-mono text-pink-500">{vitalSigns.pulse}</span>
                                         </div>
-                                        <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                                            <span className="block text-[8px] text-slate-600 mb-1">OXYGEN</span>
+                                        <div className="p-4 bg-white/5 rounded-2xl border border-white/5" onClick={() => speak("Oxigénio da malha em " + vitalSigns.oxygen + " por cento.")}>
+                                            <span className="block text-[8px] text-slate-600 mb-1">OXIGÉNIO</span>
                                             <span className="text-sm font-mono text-pink-500">{vitalSigns.oxygen}%</span>
                                         </div>
                                     </div>
@@ -259,9 +243,9 @@
 
                                 <div className="mt-auto p-5 bg-pink-500/5 rounded-[2rem] border border-pink-500/10 text-center">
                                     <div className="text-[13px] font-mono text-pink-500/90 py-2">
-                                        {"$$ \\psi = \\frac{\\int S dt}{E} $$"}
+                                        {"$$ \\psi_{local} = \\text{SoB} $$"}
                                     </div>
-                                    <p className="text-[7px] font-mono text-slate-600 mt-2 uppercase tracking-tighter">Fórmula de Estabilidade Local</p>
+                                    <p className="text-[7px] font-mono text-slate-600 mt-2 uppercase tracking-tighter">Estabilidade Sincronizada</p>
                                 </div>
                             </div>
                         </aside>
@@ -272,35 +256,30 @@
                             <svg viewBox="0 0 100 100" className="w-[85%] h-[85%] transition-transform duration-700" style={{ transform: `rotate(${rotation}deg)` }}>
                                 <defs>
                                     <filter id="glow">
-                                        <feGaussianBlur stdDeviation="0.5" result="coloredBlur"/>
-                                        <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                                        <feGaussianBlur stdDeviation="0.4" result="blur"/>
+                                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
                                     </filter>
                                 </defs>
                                 {networkNodes.map((n, i) => (
                                     <g key={i}>
                                         <circle 
-                                            cx={n.x} cy={n.y} r={n.active ? 0.6 : 0.2} 
+                                            cx={n.x} cy={n.y} r={n.active ? 0.5 : 0.2} 
                                             fill={n.active ? "#ec4899" : "#1e1b4b"} 
                                             filter={n.active ? "url(#glow)" : ""}
                                             className={n.active ? "neural-node" : ""}
-                                            style={{ opacity: n.active ? 1 : 0.2 }}
+                                            style={{ opacity: n.active ? 1 : 0.15 }}
                                         />
-                                        {n.active && i % 4 === 0 && (
+                                        {n.active && i % 5 === 0 && (
                                             <line 
                                                 x1="50" y1="50" x2={n.x} y2={n.y} 
-                                                stroke="#ec4899" strokeWidth="0.05" 
-                                                strokeDasharray="1 2" strokeOpacity="0.2"
+                                                stroke="#ec4899" strokeWidth="0.04" 
+                                                strokeDasharray="1 2" strokeOpacity="0.1"
                                             />
                                         )}
                                     </g>
                                 ))}
-                                <circle cx="50" cy="50" r="1.5" fill="#ec4899" className="animate-pulse shadow-lg" />
+                                <circle cx="50" cy="50" r="1.2" fill="#ec4899" className="animate-pulse" />
                             </svg>
-
-                            <div className="absolute bottom-12 right-12 text-right">
-                                <div className="text-[9px] font-mono text-slate-600 mb-1">LOCAL_ID</div>
-                                <div className="text-xl font-black text-white/10 uppercase tracking-[0.5em]">0X_SOBERANO</div>
-                            </div>
                         </main>
 
                         <aside className="w-[26rem] flex flex-col gap-4 shrink-0 h-full">
@@ -308,11 +287,10 @@
                                 <div className="p-8 border-b border-white/5 bg-white/5 flex justify-between items-center">
                                     <div>
                                         <h3 className="text-[11px] font-mono text-pink-500 tracking-[0.4em] uppercase">Guia Espectral</h3>
-                                        <span className="text-[8px] font-mono text-slate-500 uppercase">Processamento Local em curso</span>
+                                        <span className="text-[8px] font-mono text-slate-500 uppercase">Processamento Heurístico Local</span>
                                     </div>
                                     <div className="flex gap-1.5">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-pink-500/40 animate-bounce"></div>
-                                        <div className="w-1.5 h-1.5 rounded-full bg-pink-500/40 animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></div>
                                     </div>
                                 </div>
                                 
@@ -321,8 +299,8 @@
                                         <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                             <div className={`max-w-[92%] p-5 rounded-[2rem] text-[11px] leading-relaxed transition-all ${
                                                 m.role === 'user' 
-                                                ? 'bg-pink-500/10 border border-pink-500/20 text-pink-100 rounded-tr-none font-medium' 
-                                                : 'bg-white/5 border border-white/10 text-slate-400 rounded-tl-none font-light'
+                                                ? 'bg-pink-500/10 border border-pink-500/20 text-pink-100 rounded-tr-none' 
+                                                : 'bg-white/5 border border-white/10 text-slate-400 rounded-tl-none'
                                             }`}>
                                                 {m.text}
                                             </div>
@@ -331,8 +309,8 @@
                                     {isTyping && (
                                         <div className="flex justify-start">
                                             <div className="bg-white/5 border border-white/10 p-5 rounded-[2rem] flex gap-2 items-center">
-                                                <div className="w-1 h-1 bg-pink-500 rounded-full animate-ping"></div>
-                                                <span className="text-[9px] font-mono text-pink-500/50 uppercase tracking-widest">Calculando via GPU...</span>
+                                                <div className="w-1 h-1 bg-pink-500 rounded-full animate-bounce"></div>
+                                                <span className="text-[9px] font-mono text-pink-500/50 uppercase tracking-widest">Processando localmente...</span>
                                             </div>
                                         </div>
                                     )}
@@ -344,10 +322,10 @@
                                             type="text" 
                                             value={userInput}
                                             onChange={(e) => setUserInput(e.target.value)}
-                                            placeholder="Perguntar ao Guia Espectral..."
+                                            placeholder="Fala com o núcleo soberano..."
                                             className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-xs text-white outline-none focus:border-pink-500/40 focus:bg-white/10 transition-all font-mono"
                                         />
-                                        <button type="submit" className="absolute right-4 top-4 bottom-4 px-6 bg-pink-500/20 hover:bg-pink-500/40 text-pink-500 rounded-xl transition-all border border-pink-500/20 text-xs">
+                                        <button type="submit" className="absolute right-3 top-3 bottom-3 px-5 bg-pink-500/20 hover:bg-pink-500/40 text-pink-500 rounded-xl transition-all border border-pink-500/20 text-[9px] font-bold">
                                             ENVIAR
                                         </button>
                                     </div>
@@ -359,11 +337,11 @@
                     <footer className="h-12 mt-4 flex items-center justify-between px-10 glass-panel rounded-[1.5rem] shrink-0">
                         <div className="flex gap-12 text-[8px] font-mono text-slate-600 uppercase tracking-[0.2em]">
                             <span className="flex items-center gap-2">
-                                <span className="w-1 h-1 rounded-full bg-pink-500 shadow-[0_0_5px_#ec4899]"></span>
-                                Autonomia_IA: 100%_LOCAL
+                                <span className="w-1 h-1 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]"></span>
+                                SYSTEM_STATUS: ONLINE_LOCAL
                             </span>
-                            <span>GPU_LOAD: {isTyping ? "45%" : "2%"}</span>
-                            <span>Sync_Score: {Math.floor((synapseStrength * 0.7) + (evolutionSpeed * 0.3))}%</span>
+                            <span>NODE: {rotation.toFixed(0)}°_OFFSET</span>
+                            <span>HARDWARE_SYNC: ACTIVE</span>
                         </div>
                         <div className="text-[9px] font-mono text-pink-500/30 font-bold uppercase tracking-[0.3em]">
                             Afrokódica / Dala • Soberania Tecnológica • 2025
