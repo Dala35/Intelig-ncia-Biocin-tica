@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Afrokódica - Módulo 6: Voz do Oráculo</title>
+    <title>Afrokódica - Inteligência Biocinética</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -24,34 +24,22 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
         }
 
-        @keyframes human-glow {
-            0%, 100% { filter: drop-shadow(0 0 5px #ec4899) opacity(0.5); transform: scale(1); }
-            50% { filter: drop-shadow(0 0 20px #8b5cf6) opacity(0.8); transform: scale(1.02); }
+        @keyframes neural-pulse {
+            0%, 100% { filter: drop-shadow(0 0 2px #ec4899); opacity: 0.4; }
+            50% { filter: drop-shadow(0 0 15px #8b5cf6); opacity: 0.9; }
         }
-        .human-spectrum {
-            animation: human-glow 4s ease-in-out infinite;
-        }
+        .neural-node { animation: neural-pulse 3s ease-in-out infinite; }
 
-        @keyframes neural-flow {
-            0% { stroke-dashoffset: 100; opacity: 0.2; }
-            50% { opacity: 0.8; }
-            100% { stroke-dashoffset: 0; opacity: 0.2; }
-        }
-        .neural-path {
-            stroke-dasharray: 10;
-            animation: neural-flow 3s linear infinite;
-        }
-
-        .custom-scroll::-webkit-scrollbar { width: 3px; }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: rgba(236, 72, 153, 0.3); border-radius: 10px; }
         
-        .glow-text { text-shadow: 0 0 10px rgba(236, 72, 153, 0.5); }
-        
         .grid-overlay {
-            background-image: linear-gradient(rgba(236, 72, 153, 0.05) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(236, 72, 153, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
+            background-image: linear-gradient(rgba(236, 72, 153, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(236, 72, 153, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
         }
+
+        .chat-input:focus { outline: none; border-color: rgba(236, 72, 153, 0.5); box-shadow: 0 0 15px rgba(236, 72, 153, 0.1); }
     </style>
 </head>
 <body class="bg-void">
@@ -61,13 +49,28 @@
         const { useState, useEffect, useMemo, useRef } = React;
 
         const AI_MODES = [
-            { id: 'biokinetic', label: 'Fluxo Biocinético', desc: 'Iniciando Fluxo Biocinético. Os dados agora comportam-se como organismos celulares africanos, priorizando a regeneração e a adaptação orgânica do sistema.' },
-            { id: 'swarm', label: 'Inteligência de Enxame', desc: 'Ativando Inteligência de Enxame. A rede neural agora opera por harmonia comunitária, onde cada nó decide em prol do equilíbrio do coletivo.' },
-            { id: 'oracle', label: 'Algoritmo Oracular', desc: 'Acedendo ao Algoritmo Oracular. Iniciando predição de padrões futuros através da geometria sagrada e da ancestralidade computacional.' }
+            { id: 'biokinetic', label: 'Biocinético', desc: 'Fluxo Biocinético ativado. O sistema respira como um organismo vivo.' },
+            { id: 'swarm', label: 'Enxame', desc: 'Inteligência de Enxame ativa. Coordenação coletiva em curso.' },
+            { id: 'oracle', label: 'Oráculo', desc: 'Algoritmo Oracular iniciado. Processando padrões ancestrais.' }
         ];
 
-        function IntroPortal({ onEnter }) {
-            const [isActive, setIsActive] = useState(false);
+        function App() {
+            const [entered, setEntered] = useState(false);
+            const [mode, setMode] = useState('biokinetic');
+            const [synapseStrength, setSynapseStrength] = useState(60);
+            const [evolutionSpeed, setEvolutionSpeed] = useState(40);
+            const [activeLayers, setActiveLayers] = useState(4);
+            const [rotation, setRotation] = useState(0);
+            
+            // Chat State
+            const [messages, setMessages] = useState([
+                { role: 'assistant', text: 'Saudações, Dala. A rede biocinética está operacional. Como deseja modular nossa consciência hoje?' }
+            ]);
+            const [userInput, setUserInput] = useState('');
+            const [isTyping, setIsTyping] = useState(false);
+            const scrollRef = useRef(null);
+
+            const apiKey = ""; // Runtime provided
 
             const narrate = (text) => {
                 if ('speechSynthesis' in window) {
@@ -76,253 +79,242 @@
                     utterance.lang = 'pt-PT';
                     utterance.rate = 0.85;
                     utterance.pitch = 0.7;
-                    return utterance;
-                }
-                return null;
-            };
-
-            const activate = () => {
-                setIsActive(true);
-                const utterance = narrate("Conexão estabelecida. Bem-vindo à Inteligência Biocinética. Eu sou a sua guia espectral neste campo de observação e aprendizagem.");
-                if (utterance) {
-                    utterance.onend = () => setTimeout(onEnter, 500);
-                    window.speechSynthesis.speak(utterance);
-                } else {
-                    setTimeout(onEnter, 3500);
-                }
-            };
-
-            return (
-                <div className="fixed inset-0 z-[100] bg-[#05020a] flex flex-col items-center justify-center p-6">
-                    <div className="relative w-80 h-[450px] mb-8 flex items-center justify-center">
-                        <svg viewBox="0 0 100 150" className="w-full h-full human-spectrum">
-                            <defs>
-                                <linearGradient id="humanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" stopColor="#ec4899" stopOpacity="0.9" />
-                                    <stop offset="50%" stopColor="#8b5cf6" stopOpacity="0.6" />
-                                    <stop offset="100%" stopColor="#ec4899" stopOpacity="0.2" />
-                                </linearGradient>
-                            </defs>
-                            <circle cx="50" cy="25" r="12" fill="none" stroke="url(#humanGrad)" strokeWidth="0.5" />
-                            <circle cx="50" cy="25" r="8" fill="none" stroke="url(#humanGrad)" strokeWidth="0.2" strokeDasharray="1 1" />
-                            <path d="M50 37 L50 85 M30 45 L70 45 M30 45 L50 85 L70 45" fill="none" stroke="url(#humanGrad)" strokeWidth="0.5" />
-                            <path d="M30 45 L15 70 M70 45 L85 70" fill="none" stroke="url(#humanGrad)" strokeWidth="0.5" />
-                            <path d="M50 85 L35 130 M50 85 L65 130" fill="none" stroke="url(#humanGrad)" strokeWidth="0.5" />
-                            {[...Array(5)].map((_, i) => (
-                                <ellipse key={i} cx="50" cy="75" rx={25 + i*5} ry={60 + i*5} fill="none" stroke="#ec4899" strokeWidth="0.05" strokeOpacity={0.2 - i*0.04} />
-                            ))}
-                        </svg>
-                    </div>
-                    <h2 className="text-pink-400 font-mono text-[10px] tracking-[0.6em] uppercase mb-10 animate-pulse text-center">
-                        {isActive ? "Sincronização Vocal em Curso" : "Voz Biocinética Pronta"}
-                    </h2>
-                    <button onClick={activate} disabled={isActive} className="group relative px-16 py-5 rounded-full border border-pink-500/40 hover:border-pink-500 transition-all duration-700 bg-black/40 backdrop-blur-md">
-                        <span className="relative z-10 text-white font-mono text-xs tracking-[0.3em] uppercase">Iniciar Diálogo</span>
-                    </button>
-                </div>
-            );
-        }
-
-        function App() {
-            const [entered, setEntered] = useState(false);
-            const [mode, setMode] = useState('biokinetic');
-            const [synapseStrength, setSynapseStrength] = useState(60);
-            const [evolutionSpeed, setEvolutionSpeed] = useState(40);
-            const [rotation, setRotation] = useState(0);
-            const [logs, setLogs] = useState([]);
-            const [activeLayers, setActiveLayers] = useState(5);
-
-            const narrate = (text) => {
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = 'pt-PT';
-                    utterance.rate = 0.9;
-                    utterance.pitch = 0.75;
                     window.speechSynthesis.speak(utterance);
                 }
             };
 
-            const changeMode = (m) => {
-                setMode(m.id);
-                narrate(m.desc);
+            const scrollToBottom = () => {
+                if (scrollRef.current) {
+                    scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+                }
             };
 
-            const handleSynapseChange = (val) => {
-                setSynapseStrength(val);
-                if (val % 20 === 0) narrate(`Intensidade sináptica ajustada para ${val} por cento.`);
-            };
+            useEffect(scrollToBottom, [messages]);
 
-            const handleSpeedChange = (val) => {
-                setEvolutionSpeed(val);
-                if (val % 20 === 0) narrate(`Velocidade de evolução estabilizada em ${val} milissegundos.`);
-            };
+            const handleSend = async (e) => {
+                e.preventDefault();
+                if (!userInput.trim() || isTyping) return;
 
-            const handleLayerChange = (val) => {
-                setActiveLayers(val);
-                narrate(`Redefinindo profundidade para ${val} camadas neurais.`);
+                const userText = userInput;
+                setUserInput('');
+                setMessages(prev => [...prev, { role: 'user', text: userText }]);
+                setIsTyping(true);
+
+                try {
+                    let retries = 0;
+                    const maxRetries = 5;
+                    let responseText = "";
+
+                    while (retries < maxRetries) {
+                        try {
+                            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    contents: [{ 
+                                        parts: [{ text: `Você é a Inteligência Biocinética da Afrokódica. Responda de forma calma, poética e técnica sobre biotecnologia africana, redes neurais e ancestralidade digital. Modo atual: ${mode}. Parâmetros: Sinapses ${synapseStrength}%, Velocidade ${evolutionSpeed}ms. Usuário perguntou: ${userText}` }] 
+                                    }],
+                                    systemInstruction: { parts: [{ text: "Seu nome é Guia Espectral. Sua voz deve soar sábia e futurista." }] }
+                                })
+                            });
+                            const data = await response.json();
+                            responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "A conexão falhou temporariamente.";
+                            break;
+                        } catch (err) {
+                            retries++;
+                            await new Promise(r => setTimeout(r, Math.pow(2, retries) * 1000));
+                        }
+                    }
+
+                    setMessages(prev => [...prev, { role: 'assistant', text: responseText }]);
+                    narrate(responseText);
+                } catch (error) {
+                    setMessages(prev => [...prev, { role: 'assistant', text: "Erro na matriz de comunicação." }]);
+                } finally {
+                    setIsTyping(false);
+                }
             };
 
             useEffect(() => {
                 const interval = setInterval(() => {
-                    if (entered) {
-                        setRotation(r => (r + (evolutionSpeed / 100)) % 360);
-                    }
+                    if (entered) setRotation(r => (r + (evolutionSpeed / 100)) % 360);
                 }, 16);
                 return () => clearInterval(interval);
             }, [entered, evolutionSpeed]);
 
-            useEffect(() => {
-                if(!entered) return;
-                const interval = setInterval(() => {
-                    const newLog = `> [${new Date().toLocaleTimeString()}] Fluxo_${mode.toUpperCase()}: ${Math.random().toString(16).slice(2, 8).toUpperCase()}`;
-                    setLogs(prev => [newLog, ...prev].slice(0, 15));
-                }, 3000);
-                return () => clearInterval(interval);
-            }, [entered, mode]);
-
-            const network = useMemo(() => {
+            const networkNodes = useMemo(() => {
                 const nodes = [];
-                const pointsPerLayer = mode === 'swarm' ? 12 : 8;
                 for (let l = 1; l <= activeLayers; l++) {
-                    for (let i = 0; i < pointsPerLayer; i++) {
-                        const angle = (i / pointsPerLayer) * Math.PI * 2 + (l * 0.2);
-                        const radius = l * 9;
+                    const count = 6 + (l * 2);
+                    for (let i = 0; i < count; i++) {
+                        const angle = (i / count) * Math.PI * 2;
                         nodes.push({
-                            id: `n-${l}-${i}`,
-                            x: 50 + Math.cos(angle) * radius,
-                            y: 50 + Math.sin(angle) * radius,
-                            layer: l,
-                            active: Math.random() > 0.3
+                            id: `${l}-${i}`,
+                            x: 50 + Math.cos(angle) * (l * 10),
+                            y: 50 + Math.sin(angle) * (l * 10),
+                            active: Math.random() > 0.4
                         });
                     }
                 }
                 return nodes;
-            }, [mode, activeLayers]);
+            }, [activeLayers]);
 
-            if (!entered) return <IntroPortal onEnter={() => setEntered(true)} />;
+            if (!entered) {
+                return (
+                    <div className="fixed inset-0 bg-[#05020a] flex items-center justify-center">
+                        <button 
+                            onClick={() => { setEntered(true); narrate("Iniciando interface biocinética. Todos os sistemas prontos."); }}
+                            className="px-12 py-4 border border-pink-500/30 text-pink-400 font-mono text-xs tracking-[0.5em] hover:bg-pink-500/10 transition-all rounded-full"
+                        >
+                            INICIAR SINERGIA
+                        </button>
+                    </div>
+                );
+            }
 
             return (
-                <div className="h-screen w-full flex flex-col p-4 md:p-6 relative overflow-hidden animate-in fade-in duration-1000 grid-overlay">
-                    <header className="flex flex-col md:flex-row justify-between items-center mb-6 glass-panel p-5 rounded-[2.5rem] shrink-0 gap-4 z-10">
-                        <div className="flex items-center gap-5">
-                            <div className="w-12 h-12 rounded-full bg-pink-600/20 border border-pink-500/30 flex items-center justify-center relative">
-                                <div className="absolute inset-0 bg-pink-500/10 rounded-full animate-ping"></div>
-                                <span className="text-pink-400 font-bold">Ψ</span>
-                            </div>
+                <div className="h-screen w-full flex flex-col p-4 md:p-6 grid-overlay">
+                    <header className="flex justify-between items-center glass-panel p-4 rounded-3xl mb-4 shrink-0">
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full border border-pink-500/40 flex items-center justify-center text-pink-500 font-bold">A</div>
                             <div>
-                                <h1 className="text-xl font-black tracking-tighter text-white uppercase flex items-center gap-3">
-                                    Módulo_06
-                                    <span className="text-[10px] bg-pink-500/10 px-3 py-1 rounded-full font-mono font-normal tracking-widest text-pink-400 border border-pink-500/20">VOZ_SINTÉTICA</span>
-                                </h1>
-                                <p className="text-[9px] font-mono text-slate-500 tracking-[0.4em] uppercase mt-1">Sinfonia de Dados Ancestrais</p>
+                                <h1 className="text-sm font-bold tracking-widest uppercase">Afrokódica_M6</h1>
+                                <p className="text-[8px] font-mono text-slate-500">BIOCINETIC_CORE_V1.2</p>
                             </div>
                         </div>
-                        <nav className="flex gap-2">
+                        <div className="flex gap-2">
                             {AI_MODES.map(m => (
-                                <button key={m.id} onClick={() => changeMode(m)} className={`px-4 py-2 rounded-xl text-[9px] font-mono uppercase tracking-widest transition-all border ${mode === m.id ? 'bg-pink-500/20 border-pink-500/50 text-white' : 'border-white/5 text-slate-600 hover:text-pink-300'}`}>
-                                    {m.id}
+                                <button 
+                                    key={m.id} 
+                                    onClick={() => { setMode(m.id); narrate(m.desc); }}
+                                    className={`px-3 py-1 rounded-lg text-[9px] font-mono transition-all border ${mode === m.id ? 'bg-pink-500/20 border-pink-500/50 text-white' : 'border-white/5 text-slate-600'}`}
+                                >
+                                    {m.label}
                                 </button>
                             ))}
-                        </nav>
+                        </div>
                     </header>
 
-                    <div className="flex-1 flex flex-col md:flex-row gap-6 min-h-0">
-                        <aside className="w-full md:w-80 flex flex-col shrink-0 min-h-0 z-10">
-                            <div className="glass-panel p-8 rounded-[3rem] flex-1 flex flex-col min-h-0 overflow-y-auto custom-scroll">
-                                <h3 className="text-[10px] font-mono text-pink-400 uppercase tracking-widest mb-6 flex items-center gap-3">
-                                    <span className="w-4 h-[1px] bg-pink-500"></span> Bio_Moduladores
-                                </h3>
+                    <div className="flex-1 flex gap-4 min-h-0 overflow-hidden">
+                        {/* Control Panel */}
+                        <aside className="w-64 flex flex-col gap-4 shrink-0">
+                            <div className="glass-panel p-6 rounded-3xl flex-1 flex flex-col gap-6">
+                                <h2 className="text-[10px] font-mono text-pink-400 uppercase tracking-widest">Moduladores</h2>
                                 
-                                <div className="space-y-8">
+                                <div className="space-y-6">
                                     <div>
-                                        <div className="flex justify-between text-[10px] font-mono text-slate-500 mb-2 uppercase tracking-tighter">
-                                            <span>Intensidade_Sináptica</span>
-                                            <span className="text-pink-400 font-bold">{synapseStrength}%</span>
+                                        <div className="flex justify-between text-[9px] font-mono mb-2">
+                                            <span className="text-slate-500">SINAPSES</span>
+                                            <span className="text-pink-500">{synapseStrength}%</span>
                                         </div>
-                                        <input type="range" min="10" max="100" value={synapseStrength} onChange={(e) => handleSynapseChange(parseInt(e.target.value))} className="w-full h-1 bg-white/5 appearance-none rounded-full accent-pink-500 cursor-pointer" />
+                                        <input type="range" min="0" max="100" value={synapseStrength} onChange={(e) => setSynapseStrength(e.target.value)} className="w-full accent-pink-500 h-1 bg-white/10 rounded-full appearance-none" />
                                     </div>
-
                                     <div>
-                                        <div className="flex justify-between text-[10px] font-mono text-slate-500 mb-2 uppercase tracking-tighter">
-                                            <span>Velocidade_Evolutiva</span>
-                                            <span className="text-pink-400 font-bold">{evolutionSpeed}ms</span>
+                                        <div className="flex justify-between text-[9px] font-mono mb-2">
+                                            <span className="text-slate-500">EVOLUÇÃO</span>
+                                            <span className="text-pink-500">{evolutionSpeed}ms</span>
                                         </div>
-                                        <input type="range" min="1" max="100" value={evolutionSpeed} onChange={(e) => handleSpeedChange(parseInt(e.target.value))} className="w-full h-1 bg-white/5 appearance-none rounded-full accent-pink-500 cursor-pointer" />
+                                        <input type="range" min="10" max="100" value={evolutionSpeed} onChange={(e) => setEvolutionSpeed(e.target.value)} className="w-full accent-pink-500 h-1 bg-white/10 rounded-full appearance-none" />
                                     </div>
-
                                     <div>
-                                        <div className="flex justify-between text-[10px] font-mono text-slate-500 mb-2 uppercase tracking-tighter">
-                                            <span>Profundidade_Camadas</span>
-                                            <span className="text-pink-400 font-bold">{activeLayers}</span>
+                                        <div className="flex justify-between text-[9px] font-mono mb-2">
+                                            <span className="text-slate-500">CAMADAS</span>
+                                            <span className="text-pink-500">{activeLayers}</span>
                                         </div>
-                                        <input type="range" min="1" max="8" value={activeLayers} onChange={(e) => handleLayerChange(parseInt(e.target.value))} className="w-full h-1 bg-white/5 appearance-none rounded-full accent-pink-500 cursor-pointer" />
+                                        <input type="range" min="1" max="6" value={activeLayers} onChange={(e) => setActiveLayers(e.target.value)} className="w-full accent-pink-500 h-1 bg-white/10 rounded-full appearance-none" />
                                     </div>
+                                </div>
 
-                                    <div className="mt-auto border-t border-white/5 pt-6">
-                                        <h4 className="text-[8px] font-mono text-slate-600 uppercase mb-3">Live_System_Log</h4>
-                                        <div className="space-y-1 overflow-hidden h-32">
-                                            {logs.map((log, i) => (
-                                                <p key={i} className="text-[8px] font-mono text-pink-500/60 truncate">{log}</p>
-                                            ))}
-                                        </div>
-                                    </div>
+                                <div className="mt-auto p-4 bg-pink-500/5 rounded-2xl border border-pink-500/10">
+                                    <p className="text-[8px] font-mono text-slate-400 leading-relaxed italic">
+                                        "A biologia é o software original. Estamos apenas reescrevendo o acesso."
+                                    </p>
                                 </div>
                             </div>
                         </aside>
 
-                        <main className="flex-1 glass-panel rounded-[3.5rem] relative overflow-hidden border-pink-500/10 z-0 group">
-                            <div className="absolute inset-0 flex items-center justify-center cursor-crosshair" onClick={() => narrate(`Campo neural ativo em modo ${mode}. Atualmente processando ${network.length} conexões biocinéticas.`)}>
-                                <svg viewBox="0 0 100 100" className="w-[85%] h-[85%]" style={{ transform: `rotate(${rotation}deg)` }}>
-                                    <defs>
-                                        <radialGradient id="nodeGrad" cx="50%" cy="50%" r="50%">
-                                            <stop offset="0%" stopColor="#ec4899" />
-                                            <stop offset="100%" stopColor="#8b5cf6" />
-                                        </radialGradient>
-                                    </defs>
-                                    {network.map((n, i) => {
-                                        const next = network[(i + 1) % network.length];
-                                        if (n.layer !== next.layer) return null;
-                                        return (
-                                            <line key={`path-${i}`} x1={n.x} y1={n.y} x2={next.x} y2={next.y} stroke="currentColor" className="text-pink-500/10 neural-path" strokeWidth="0.1" />
-                                        );
-                                    })}
-                                    {network.map((n) => (
-                                        <circle key={n.id} cx={n.x} cy={n.y} r={n.active ? 0.8 : 0.4} fill={n.active ? "url(#nodeGrad)" : "#1e1b4b"} style={{ opacity: n.active ? (synapseStrength/100) : 0.2 }} />
-                                    ))}
-                                    <circle cx="50" cy="50" r="1.2" fill="white" className="animate-pulse" />
-                                </svg>
-                            </div>
-                            
-                            <div className="absolute top-10 left-10 text-white/40 font-mono text-[8px] space-y-1 pointer-events-none">
-                                <p>X_COORD: {(rotation * 1.5).toFixed(2)}</p>
-                                <p>Y_COORD: {(synapseStrength * 0.8).toFixed(2)}</p>
-                                <p>AUDIO_STATUS: EMITTING</p>
-                            </div>
-
-                            <div className="absolute bottom-10 right-10 flex flex-col items-end gap-2">
-                                <button onClick={() => narrate("A interface está configurada para assistência vocal completa. Explore os módulos laterais ou alterne entre os modos de inteligência para receber orientações detalhadas.")} className="px-4 py-2 bg-pink-500/10 hover:bg-pink-500/20 backdrop-blur-xl border border-pink-500/20 rounded-2xl transition-colors">
-                                    <p className="text-[8px] font-mono text-pink-400 uppercase mb-1">Status_do_Oráculo</p>
-                                    <p className="text-xs font-bold text-white tracking-widest uppercase italic">Ouvir Guia</p>
-                                </button>
+                        {/* Visual Core */}
+                        <main className="flex-1 glass-panel rounded-[3rem] relative flex items-center justify-center overflow-hidden">
+                            <svg viewBox="0 0 100 100" className="w-4/5 h-4/5" style={{ transform: `rotate(${rotation}deg)` }}>
+                                {networkNodes.map((n, i) => (
+                                    <g key={i}>
+                                        <circle 
+                                            cx={n.x} cy={n.y} r={n.active ? 0.6 : 0.3} 
+                                            fill={n.active ? "#ec4899" : "#1e1b4b"} 
+                                            className={n.active ? "neural-node" : ""}
+                                        />
+                                        {n.active && networkNodes.slice(i+1, i+3).map((next, j) => (
+                                            <line 
+                                                key={j} x1={n.x} y1={n.y} x2={next.x} y2={next.y} 
+                                                stroke="#ec4899" strokeWidth="0.05" strokeOpacity="0.1" 
+                                            />
+                                        ))}
+                                    </g>
+                                ))}
+                            </svg>
+                            <div className="absolute top-8 left-8 flex flex-col gap-1">
+                                <div className="h-1 w-12 bg-pink-500/20 rounded-full overflow-hidden">
+                                    <div className="h-full bg-pink-500 w-2/3 animate-pulse"></div>
+                                </div>
+                                <span className="text-[8px] font-mono text-pink-500/50 uppercase">Neural_Link: Estável</span>
                             </div>
                         </main>
+
+                        {/* Conversational AI Chat */}
+                        <aside className="w-96 flex flex-col gap-4 shrink-0 h-full">
+                            <div className="glass-panel rounded-[2.5rem] flex-1 flex flex-col overflow-hidden border-pink-500/10">
+                                <div className="p-5 border-b border-white/5 bg-white/5 flex justify-between items-center">
+                                    <h3 className="text-[10px] font-mono text-pink-400 tracking-[0.2em] uppercase">Diálogo Espectral</h3>
+                                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                                </div>
+                                
+                                <div ref={scrollRef} className="flex-1 overflow-y-auto p-5 space-y-4 custom-scroll">
+                                    {messages.map((m, i) => (
+                                        <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                            <div className={`max-w-[85%] p-4 rounded-2xl text-xs leading-relaxed ${
+                                                m.role === 'user' 
+                                                ? 'bg-pink-500/10 border border-pink-500/20 text-pink-100 rounded-tr-none' 
+                                                : 'bg-white/5 border border-white/10 text-slate-300 rounded-tl-none'
+                                            }`}>
+                                                {m.text}
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {isTyping && (
+                                        <div className="flex justify-start">
+                                            <div className="bg-white/5 border border-white/10 p-3 rounded-2xl flex gap-1 items-center">
+                                                <div className="w-1 h-1 bg-pink-500 rounded-full animate-bounce"></div>
+                                                <div className="w-1 h-1 bg-pink-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                                                <div className="w-1 h-1 bg-pink-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <form onSubmit={handleSend} className="p-4 bg-white/5 border-t border-white/10">
+                                    <div className="relative">
+                                        <input 
+                                            type="text" 
+                                            value={userInput}
+                                            onChange={(e) => setUserInput(e.target.value)}
+                                            placeholder="Perguntar ao sistema..."
+                                            className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-3 text-xs text-white chat-input transition-all placeholder:text-slate-600 font-mono"
+                                        />
+                                        <button type="submit" className="absolute right-2 top-2 bottom-2 px-4 bg-pink-500/20 hover:bg-pink-500/30 text-pink-400 rounded-xl transition-all border border-pink-500/20">
+                                            →
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </aside>
                     </div>
 
-                    <footer className="mt-6 flex flex-col md:flex-row justify-between items-center px-10 py-5 glass-panel rounded-[2.5rem] shrink-0 border-t border-pink-500/10 z-10">
-                        <div className="flex gap-12 text-[8px] font-mono text-slate-500 uppercase tracking-widest">
-                            <p>Voz: <span className="text-pink-500">Sincronizada</span></p>
-                            <p>Latência: <span className="text-white">5ms</span></p>
-                            <p>Entidade: <span className="text-pink-500">Guia Espectral</span></p>
+                    <footer className="h-12 mt-4 flex items-center justify-between px-6 glass-panel rounded-2xl shrink-0">
+                        <div className="flex gap-8 text-[8px] font-mono text-slate-500 uppercase">
+                            <span>Sincronia: {Math.floor(synapseStrength * 0.9 + evolutionSpeed * 0.1)}%</span>
+                            <span>Memória_Digital: OK</span>
                         </div>
-                        <div className="flex items-center gap-4">
-                            <span className="text-[9px] text-pink-400 font-bold uppercase tracking-widest glow-text">DIÁLOGO_BIO_SINTÉTICO_ATIVO</span>
-                            <div className="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center">
-                                <div className="w-1 h-3 bg-pink-500/40 animate-bounce mx-[1px]"></div>
-                                <div className="w-1 h-5 bg-pink-500 animate-bounce mx-[1px]" style={{animationDelay: '0.1s'}}></div>
-                                <div className="w-1 h-2 bg-pink-500/60 animate-bounce mx-[1px]" style={{animationDelay: '0.2s'}}></div>
-                            </div>
-                        </div>
+                        <div className="text-[8px] font-mono text-pink-500/40">AFROKÓDICA © 2025 • INTEGRIDADE_TOTAL</div>
                     </footer>
                 </div>
             );
